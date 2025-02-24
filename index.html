@@ -1,33 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Score Tracker</title>
+    <title>麻将琅琊榜</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        h2 {
+            color: #d9534f;
+        }
+        table {
+            width: 60%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #d9534f;
+            color: white;
+        }
+        td {
+            background-color: #ffffff;
+        }
+        #totalScores {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .champion {
+            color: #d9534f;
+            font-weight: bold;
+        }
+        a {
+            text-decoration: none;
+            padding: 10px 15px;
+            background: #d9534f;
+            color: white;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        a:hover {
+            background: #c9302c;
+        }
+    </style>
 </head>
 <body>
-    <h2>Player Score Tracker</h2>
+    <h2>麻将琅琊榜</h2>
 
     <!-- Total Scores Display -->
     <div id="totalScores">
-        <h3>Total Scores:</h3>
-        <p>Player 1: <span id="totalP1">0</span></p>
-        <p>Player 2: <span id="totalP2">0</span></p>
-        <p>Player 3: <span id="totalP3">0</span></p>
-        <p>Player 4: <span id="totalP4">0</span></p>
+        <h3>总积分：</h3>
+        <p>老大: <span id="totalP1">0</span></p>
+        <p>老二: <span id="totalP2">0</span></p>
+        <p>老三: <span id="totalP3">0</span></p>
+        <p>老四: <span id="totalP4">0</span></p>
     </div>
 
     <!-- Score Table -->
-    <table border="1">
+    <table>
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Player 1</th>
-                <th>Player 2</th>
-                <th>Player 3</th>
-                <th>Player 4</th>
+                <th>日期</th>
+                <th>老大</th>
+                <th>老二</th>
+                <th>老三</th>
+                <th>老四</th>
             </tr>
         </thead>
         <tbody id="scoreTableBody">
@@ -35,7 +83,7 @@
         </tbody>
     </table>
 
-    <p><a href="addrecord.html">Add New Scores</a></p>
+    <p><a href="addrecord.html">添加新记录</a></p>
 
     <script>
         // Firebase configuration
@@ -59,16 +107,16 @@
                 const tableBody = document.getElementById("scoreTableBody");
                 tableBody.innerHTML = ""; // Clear previous data
 
-                let totalScores = { player1: 0, player2: 0, player3: 0, player4: 0 };
+                let totalScores = { 老大: 0, 老二: 0, 老三: 0, 老四: 0 };
 
                 snapshot.forEach((childSnapshot) => {
                     const data = childSnapshot.val();
 
                     // Add each score to the total
-                    totalScores.player1 += Number(data.player1) || 0;
-                    totalScores.player2 += Number(data.player2) || 0;
-                    totalScores.player3 += Number(data.player3) || 0;
-                    totalScores.player4 += Number(data.player4) || 0;
+                    totalScores.老大 += Number(data.player1) || 0;
+                    totalScores.老二 += Number(data.player2) || 0;
+                    totalScores.老三 += Number(data.player3) || 0;
+                    totalScores.老四 += Number(data.player4) || 0;
 
                     // Append to table
                     const row = `
@@ -84,27 +132,27 @@
                 });
 
                 // Display total scores
-                document.getElementById("totalP1").textContent = totalScores.player1;
-                document.getElementById("totalP2").textContent = totalScores.player2;
-                document.getElementById("totalP3").textContent = totalScores.player3;
-                document.getElementById("totalP4").textContent = totalScores.player4;
+                document.getElementById("totalP1").textContent = totalScores.老大;
+                document.getElementById("totalP2").textContent = totalScores.老二;
+                document.getElementById("totalP3").textContent = totalScores.老三;
+                document.getElementById("totalP4").textContent = totalScores.老四;
 
                 // Determine the champion (highest scorer)
                 let scoresArray = [
-                    { player: "Player 1", score: totalScores.player1, id: "totalP1" },
-                    { player: "Player 2", score: totalScores.player2, id: "totalP2" },
-                    { player: "Player 3", score: totalScores.player3, id: "totalP3" },
-                    { player: "Player 4", score: totalScores.player4, id: "totalP4" }
+                    { player: "老大", score: totalScores.老大, id: "totalP1" },
+                    { player: "老二", score: totalScores.老二, id: "totalP2" },
+                    { player: "老三", score: totalScores.老三, id: "totalP3" },
+                    { player: "老四", score: totalScores.老四, id: "totalP4" }
                 ];
 
                 // Find the max score
-                let maxScore = Math.max(totalScores.player1, totalScores.player2, totalScores.player3, totalScores.player4);
+                let maxScore = Math.max(totalScores.老大, totalScores.老二, totalScores.老三, totalScores.老四);
 
                 // Update UI to mark the champion
                 scoresArray.forEach(player => {
                     let scoreElement = document.getElementById(player.id);
                     if (player.score === maxScore && maxScore > 0) {
-                        scoreElement.innerHTML += " 🏆 Champion";
+                        scoreElement.innerHTML += " 🏆 <span class='champion'>冠军</span>";
                     }
                 });
             });
