@@ -39,21 +39,29 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function fetchScores() {
-            db.ref("scores").on("value", (snapshot) => {
-                const data = snapshot.val() || { player1: 0, player2: 0, player3: 0, player4: 0 };
-                
-                const tableBody = document.getElementById("scoreTableBody");
-                tableBody.innerHTML = `
-                    <tr><td>Player 1</td><td>${data.player1}</td></tr>
-                    <tr><td>Player 2</td><td>${data.player2}</td></tr>
-                    <tr><td>Player 3</td><td>${data.player3}</td></tr>
-                    <tr><td>Player 4</td><td>${data.player4}</td></tr>
-                `;
+function fetchScores() {
+    db.ref("scores").on("value", (snapshot) => {
+        const scores = snapshot.val();
+        const tableBody = document.getElementById("scoreTable");
+        tableBody.innerHTML = "";
+
+        if (scores) {
+            Object.values(scores).forEach(entry => {
+                const row = `<tr>
+                    <td>${entry.date}</td>
+                    <td>${entry.player1}</td>
+                    <td>${entry.player2}</td>
+                    <td>${entry.player3}</td>
+                    <td>${entry.player4}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
             });
         }
+    });
+}
 
-        fetchScores();
+
+    fetchScores();
     </script>
 </body>
 </html>
