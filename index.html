@@ -4,61 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Score Tracker</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
     <h2>Player Score Tracker</h2>
-    
+
     <table border="1">
         <thead>
             <tr>
-                <th>Player</th>
-                <th>Score</th>
+                <th>Date</th>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Player 3</th>
+                <th>Player 4</th>
             </tr>
         </thead>
         <tbody id="scoreTableBody">
+            <!-- Data from Firebase will be inserted here -->
         </tbody>
     </table>
 
-    <br>
-    <button onclick="window.location.href='addrecord.html'">Add Record</button>
+    <p><a href="addrecord.html">Add New Scores</a></p>
 
     <script>
-        // Firebase config
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDN3_1A-B53c5IMcc93RFbV9yf_QmBc8hc",
             authDomain: "mahjongscore-a94a8.firebaseapp.com",
             databaseURL: "https://mahjongscore-a94a8-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "mahjongscore-a94a8",
-            storageBucket: "mahjongscore-a94a8.firebasestorage.app",
+            storageBucket: "mahjongscore-a94a8.appspot.com",
             messagingSenderId: "405131033884",
             appId: "1:405131033884:web:1a79eff60baf45ddfb4ed9"
         };
 
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-function fetchScores() {
-    db.ref("scores").on("value", (snapshot) => {
-        const scores = snapshot.val();
-        const tableBody = document.getElementById("scoreTable");
-        tableBody.innerHTML = "";
+        // Function to fetch and display records
+        function fetchScores() {
+            db.ref("scores").on("value", (snapshot) => {
+                const tableBody = document.getElementById("scoreTableBody");
+                tableBody.innerHTML = ""; // Clear previous data
 
-        if (scores) {
-            Object.values(scores).forEach(entry => {
-                const row = `<tr>
-                    <td>${entry.date}</td>
-                    <td>${entry.player1}</td>
-                    <td>${entry.player2}</td>
-                    <td>${entry.player3}</td>
-                    <td>${entry.player4}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    const row = `
+                        <tr>
+                            <td>${data.date}</td>
+                            <td>${data.player1}</td>
+                            <td>${data.player2}</td>
+                            <td>${data.player3}</td>
+                            <td>${data.player4}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
             });
         }
-    });
-}
+
+        // Run fetchScores on page load
+        fetchScores();
+    </script>
+</body>
+</html>
 
 
     fetchScores();
