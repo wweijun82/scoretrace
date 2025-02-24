@@ -46,33 +46,41 @@
         // Function to fetch and display records
         function fetchScores() {
             db.ref("scores").on("value", (snapshot) => {
+                console.log("Firebase snapshot:", snapshot.val()); // Debugging
+
                 const tableBody = document.getElementById("scoreTableBody");
+                if (!tableBody) {
+                    console.error("Table body element not found!");
+                    return;
+                }
+
                 tableBody.innerHTML = ""; // Clear previous data
+
+                if (!snapshot.exists()) {
+                    console.log("No data found in Firebase!");
+                    return;
+                }
 
                 snapshot.forEach((childSnapshot) => {
                     const data = childSnapshot.val();
+                    console.log("Record:", data); // Debugging
+
                     const row = `
                         <tr>
-                            <td>${data.date}</td>
-                            <td>${data.player1}</td>
-                            <td>${data.player2}</td>
-                            <td>${data.player3}</td>
-                            <td>${data.player4}</td>
+                            <td>${data.date || "N/A"}</td>
+                            <td>${data.player1 || 0}</td>
+                            <td>${data.player2 || 0}</td>
+                            <td>${data.player3 || 0}</td>
+                            <td>${data.player4 || 0}</td>
                         </tr>
                     `;
-                    tableBody.innerHTML += row;
+                    tableBody.insertAdjacentHTML("beforeend", row);
                 });
             });
         }
 
         // Run fetchScores on page load
         fetchScores();
-    </script>
-</body>
-</html>
-
-
-    fetchScores();
     </script>
 </body>
 </html>
