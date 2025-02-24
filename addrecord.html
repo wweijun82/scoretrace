@@ -36,25 +36,27 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function updateScores() {
-            db.ref("scores").get().then(snapshot => {
-                const currentScores = snapshot.val() || { player1: 0, player2: 0, player3: 0, player4: 0 };
+        function addRecord() {
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
 
-                const newScores = {
-                    player1: currentScores.player1 + (Number(document.getElementById("player1").value) || 0),
-                    player2: currentScores.player2 + (Number(document.getElementById("player2").value) || 0),
-                    player3: currentScores.player3 + (Number(document.getElementById("player3").value) || 0),
-                    player4: currentScores.player4 + (Number(document.getElementById("player4").value) || 0)
-                };
+        const record = {
+            date: timestamp,
+            player1: Number(document.getElementById("player1").value) || 0,
+            player2: Number(document.getElementById("player2").value) || 0,
+            player3: Number(document.getElementById("player3").value) || 0,
+            player4: Number(document.getElementById("player4").value) || 0
+    };
 
-                db.ref("scores").set(newScores);
+        db.ref("scores").push(record);  // <-- This creates a new unique entry each time
 
-                document.getElementById("player1").value = "";
-                document.getElementById("player2").value = "";
-                document.getElementById("player3").value = "";
-                document.getElementById("player4").value = "";
-            });
-        }
+        document.getElementById("player1").value = "";
+        document.getElementById("player2").value = "";
+        document.getElementById("player3").value = "";
+        document.getElementById("player4").value = "";
+}
+
+
 
         function cleanupScores() {
             if (confirm("Are you sure you want to clear all scores?")) {
