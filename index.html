@@ -4,75 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Score Tracker</title>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
     <h2>Player Score Tracker</h2>
-    <div id="scores"></div>
-    <input type="number" id="player1" placeholder="Player 1 Score">
-    <input type="number" id="player2" placeholder="Player 2 Score">
-    <input type="number" id="player3" placeholder="Player 3 Score">
-    <input type="number" id="player4" placeholder="Player 4 Score">
-    <button onclick="updateScores()">Update Scores</button>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody id="scoreTableBody">
+        </tbody>
+    </table>
+
+    <br>
+    <button onclick="window.location.href='addrecord.html'">Add Record</button>
 
     <script>
-        // Firebase config (Replace with your own)
-	const firebaseConfig = {
-  	apiKey: "AIzaSyDN3_1A-B53c5IMcc93RFbV9yf_QmBc8hc",
-  	authDomain: "mahjongscore-a94a8.firebaseapp.com",
-  	databaseURL: "https://mahjongscore-a94a8-default-rtdb.asia-southeast1.firebasedatabase.app",
-  	projectId: "mahjongscore-a94a8",
-  	storageBucket: "mahjongscore-a94a8.firebasestorage.app",
-  	messagingSenderId: "405131033884",
-  	appId: "1:405131033884:web:1a79eff60baf45ddfb4ed9"
-	};
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDN3_1A-B53c5IMcc93RFbV9yf_QmBc8hc",
+            authDomain: "mahjongscore-a94a8.firebaseapp.com",
+            databaseURL: "https://mahjongscore-a94a8-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mahjongscore-a94a8",
+            storageBucket: "mahjongscore-a94a8.firebasestorage.app",
+            messagingSenderId: "405131033884",
+            appId: "1:405131033884:web:1a79eff60baf45ddfb4ed9"
+        };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Fetch and display scores
         function fetchScores() {
             db.ref("scores").on("value", (snapshot) => {
                 const data = snapshot.val() || { player1: 0, player2: 0, player3: 0, player4: 0 };
-
-                // Update score display
-                document.getElementById("scores").innerHTML = `
-                    <h3>Current Scores:</h3>
-                    <p>Player 1: <b>${data.player1}</b></p>
-                    <p>Player 2: <b>${data.player2}</b></p>
-                    <p>Player 3: <b>${data.player3}</b></p>
-                    <p>Player 4: <b>${data.player4}</b></p>
+                
+                const tableBody = document.getElementById("scoreTableBody");
+                tableBody.innerHTML = `
+                    <tr><td>Player 1</td><td>${data.player1}</td></tr>
+                    <tr><td>Player 2</td><td>${data.player2}</td></tr>
+                    <tr><td>Player 3</td><td>${data.player3}</td></tr>
+                    <tr><td>Player 4</td><td>${data.player4}</td></tr>
                 `;
             });
         }
 
-        // Update scores in Firebase
-        function updateScores() {
-            db.ref("scores").get().then(snapshot => {
-                const currentScores = snapshot.val() || { player1: 0, player2: 0, player3: 0, player4: 0 };
-
-                const newScores = {
-                    player1: currentScores.player1 + (Number(document.getElementById("player1").value) || 0),
-                    player2: currentScores.player2 + (Number(document.getElementById("player2").value) || 0),
-                    player3: currentScores.player3 + (Number(document.getElementById("player3").value) || 0),
-                    player4: currentScores.player4 + (Number(document.getElementById("player4").value) || 0)
-                };
-
-                // Save to Firebase
-                db.ref("scores").set(newScores);
-
-                // Clear input fields after submission
-                document.getElementById("player1").value = "";
-                document.getElementById("player2").value = "";
-                document.getElementById("player3").value = "";
-                document.getElementById("player4").value = "";
-            });
-        }
-
-        // Run fetchScores on page load
         fetchScores();
     </script>
 </body>
