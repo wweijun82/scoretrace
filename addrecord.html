@@ -56,6 +56,25 @@
         document.getElementById("player4").value = "";
 }
 
+        function updateScores() {
+            db.ref("scores").get().then(snapshot => {
+                const currentScores = snapshot.val() || { player1: 0, player2: 0, player3: 0, player4: 0 };
+
+                const newScores = {
+                    player1: currentScores.player1 + (Number(document.getElementById("player1").value) || 0),
+                    player2: currentScores.player2 + (Number(document.getElementById("player2").value) || 0),
+                    player3: currentScores.player3 + (Number(document.getElementById("player3").value) || 0),
+                    player4: currentScores.player4 + (Number(document.getElementById("player4").value) || 0)
+                };
+
+                db.ref("scores").set(newScores);
+
+                document.getElementById("player1").value = "";
+                document.getElementById("player2").value = "";
+                document.getElementById("player3").value = "";
+                document.getElementById("player4").value = "";
+            });
+        }
 
 
         function cleanupScores() {
