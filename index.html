@@ -10,6 +10,16 @@
 <body>
     <h2>Player Score Tracker</h2>
 
+    <!-- Total Scores Display -->
+    <div id="totalScores">
+        <h3>Total Scores:</h3>
+        <p>Player 1: <span id="totalP1">0</span></p>
+        <p>Player 2: <span id="totalP2">0</span></p>
+        <p>Player 3: <span id="totalP3">0</span></p>
+        <p>Player 4: <span id="totalP4">0</span></p>
+    </div>
+
+    <!-- Score Table -->
     <table border="1">
         <thead>
             <tr>
@@ -46,41 +56,62 @@
         // Function to fetch and display records
         function fetchScores() {
             db.ref("scores").on("value", (snapshot) => {
-                console.log("Firebase snapshot:", snapshot.val()); // Debugging
-
                 const tableBody = document.getElementById("scoreTableBody");
-                if (!tableBody) {
-                    console.error("Table body element not found!");
-                    return;
-                }
-
                 tableBody.innerHTML = ""; // Clear previous data
 
-                if (!snapshot.exists()) {
-                    console.log("No data found in Firebase!");
-                    return;
-                }
+                let totalScores = { player1: 0, player2: 0, player3: 0, player4: 0 };
 
                 snapshot.forEach((childSnapshot) => {
                     const data = childSnapshot.val();
-                    console.log("Record:", data); // Debugging
 
+                    // Add each score to the total
+                    totalScores.player1 += Number(data.player1) || 0;
+                    totalScores.player2 += Number(data.player2) || 0;
+                    totalScores.player3 += Number(data.player3) || 0;
+                    totalScores.player4 += Number(data.player4) || 0;
+
+                    // Append to table
                     const row = `
                         <tr>
-                            <td>${data.date || "N/A"}</td>
-                            <td>${data.player1 || 0}</td>
-                            <td>${data.player2 || 0}</td>
-                            <td>${data.player3 || 0}</td>
-                            <td>${data.player4 || 0}</td>
+                            <td>${data.date}</td>
+                            <td>${data.player1}</td>
+                            <td>${data.player2}</td>
+                            <td>${data.player3}</td>
+                            <td>${data.player4}</td>
                         </tr>
                     `;
-                    tableBody.insertAdjacentHTML("beforeend", row);
+                    tableBody.innerHTML += row;
+                });
+
+                // Display total scores
+                document.getElementById("totalP1").textContent = totalScores.player1;
+                document.getElementById("totalP2").textContent = totalScores.player2;
+                document.getElementById("totalP3").textContent = totalScores.player3;
+                document.getElementById("totalP4").textContent = totalScores.player4;
+
+                // Determine the champion (highest scorer)
+                let scoresArray = [
+                    { player: "Player 1", score: totalScores.player1, id: "totalP1" },
+                    { player: "Player 2", score: totalScores.player2, id: "totalP2" },
+                    { player: "Player 3", score: totalScores.player3, id: "totalP3" },
+                    { player: "Player 4", score: totalScores.player4, id: "totalP4" }
+                ];
+
+                // Find the max score
+                let maxScore = Math.max(totalScores.player1, totalScores.player2, totalScores.player3, totalScores.player4);
+
+                // Update UI to mark the champion
+                scoresArray.forEach(player => {
+                    let scoreElement = document.getElementById(player.id);
+                    if (player.score === maxScore && maxScore > 0) {
+                        scoreElement.innerHTML += " 🏆 Champion";
+                    }
                 });
             });
         }
 
         // Run fetchScores on page load
-       fetchScores();
+        fetchScores();
     </script>
 </body>
 </html>
