@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Record</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+    <h2>Add Player Scores</h2>
+
+    <input type="number" id="player1" placeholder="Player 1 Score">
+    <input type="number" id="player2" placeholder="Player 2 Score">
+    <input type="number" id="player3" placeholder="Player 3 Score">
+    <input type="number" id="player4" placeholder="Player 4 Score">
+    <button onclick="updateScores()">Update Scores</button>
+
+    <br><br>
+    <button onclick="cleanupScores()">Cleanup Scores</button>
+    <br><br>
+    <button onclick="window.location.href='index.html'">Back to Scoreboard</button>
+
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDN3_1A-B53c5IMcc93RFbV9yf_QmBc8hc",
+            authDomain: "mahjongscore-a94a8.firebaseapp.com",
+            databaseURL: "https://mahjongscore-a94a8-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mahjongscore-a94a8",
+            storageBucket: "mahjongscore-a94a8.firebasestorage.app",
+            messagingSenderId: "405131033884",
+            appId: "1:405131033884:web:1a79eff60baf45ddfb4ed9"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function updateScores() {
+            db.ref("scores").get().then(snapshot => {
+                const currentScores = snapshot.val() || { player1: 0, player2: 0, player3: 0, player4: 0 };
+
+                const newScores = {
+                    player1: currentScores.player1 + (Number(document.getElementById("player1").value) || 0),
+                    player2: currentScores.player2 + (Number(document.getElementById("player2").value) || 0),
+                    player3: currentScores.player3 + (Number(document.getElementById("player3").value) || 0),
+                    player4: currentScores.player4 + (Number(document.getElementById("player4").value) || 0)
+                };
+
+                db.ref("scores").set(newScores);
+
+                document.getElementById("player1").value = "";
+                document.getElementById("player2").value = "";
+                document.getElementById("player3").value = "";
+                document.getElementById("player4").value = "";
+            });
+        }
+
+        function cleanupScores() {
+            if (confirm("Are you sure you want to clear all scores?")) {
+                db.ref("scores").set({
+                    player1: 0,
+                    player2: 0,
+                    player3: 0,
+                    player4: 0
+                });
+            }
+        }
+    </script>
+</body>
+</html>
