@@ -83,7 +83,10 @@
         </tbody>
     </table>
 
-    <p><a href="addrecord.html">添加新记录</a></p>
+    <!-- Add Record Button with Password Prompt -->
+    <p>
+        <a href="#" class="button" onclick="checkPassword()">添加新记录</a>
+    </p>
 
     <script>
         // Firebase configuration
@@ -101,6 +104,21 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // function to check passpword when add record is clicked
+        function checkPassword() {
+            let inputPassword = prompt("请输入密码:");
+    
+            // Fetch password from Firebase
+            db.ref("security/password").once("value", (snapshot) => {
+                const realPassword = snapshot.val();
+                
+                if (inputPassword === realPassword) {
+                    window.location.href = "addrecord.html"; // Redirect to addrecord.html
+                } else {
+                    alert("密码错误！");
+                }
+            });
+            
         // Function to fetch and display records
         function fetchScores() {
             db.ref("scores").on("value", (snapshot) => {
