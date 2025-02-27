@@ -126,7 +126,7 @@
             db.ref("scores").on("value", (snapshot) => {
                 const tableBody = document.getElementById("scoreTableBody");
                 tableBody.innerHTML = ""; // Clear previous data
-
+                let rows = []; // Store rows for sorting
                 let totalScores = { 老大: 0, 老二: 0, 老三: 0, 老四: 0 };
 
                 snapshot.forEach((childSnapshot) => {
@@ -140,8 +140,8 @@
                     totalScores.老三 += Number(data.player3) || 0;
                     totalScores.老四 += Number(data.player4) || 0;
 
-                    // Append to table
-                    const row = `
+                    // Store row in array for sorting
+                    rows.push(`
                         <tr>
                             <td>${dateOnly}</td>
                             <td>${data.player1}</td>
@@ -150,9 +150,11 @@
                             <td>${data.player4}</td>
                             <td>${subtotal}</td>
                         </tr>
-                    `;
-                    tableBody.innerHTML += row;
+                    `);
                 });
+                
+                // Reverse the order so newest data appears first
+                tableBody.innerHTML = rows.reverse().join("");
 
                 // Display total scores
                 document.getElementById("totalP1").textContent = totalScores.老大;
