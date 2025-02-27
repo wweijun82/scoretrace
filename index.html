@@ -76,6 +76,7 @@
                 <th>老二</th>
                 <th>老三</th>
                 <th>老四</th>
+                <th>小计</th>
             </tr>
         </thead>
         <tbody id="scoreTableBody">
@@ -130,6 +131,8 @@
 
                 snapshot.forEach((childSnapshot) => {
                     const data = childSnapshot.val();
+                    const dateOnly = data.date.split(" ")[0]; // Extract only the date
+                    const subtotal = data.player1 + data.player2 + data.player3 + data.player4;
 
                     // Add each score to the total
                     totalScores.老大 += Number(data.player1) || 0;
@@ -140,11 +143,12 @@
                     // Append to table
                     const row = `
                         <tr>
-                            <td>${data.date}</td>
+                            <td>${dateOnly}</td>
                             <td>${data.player1}</td>
                             <td>${data.player2}</td>
                             <td>${data.player3}</td>
                             <td>${data.player4}</td>
+                            <td>${subtotal}</td>
                         </tr>
                     `;
                     tableBody.innerHTML += row;
